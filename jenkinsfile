@@ -1,0 +1,29 @@
+pipeline{
+    agent any
+
+     environment {
+        ACR_NAME = 'mavenregistry' // Replace with your Azure Container Registry name
+        IMAGE_NAME = 'maven' // Replace with your desired image name
+        IMAGE_TAG = 'latest'
+    }
+
+    stages{
+        stage ('build maven image') {
+            steps{
+                azureDirectoryId = credentials('ad-id')
+                azureCLI([credentialsId: azureCredentials, script: 'az acr login --name ' + ACR_NAME]) sh "docker rm -f sql_container || true"
+                sh "docker rmi maven_image || true"
+                sh "docker rmi maven_container || true"
+                sh "docker build -t maven_image ./spring-boot-hello-world"
+                sh "docker push $ACR_NAME.azurecr.io/$IMAGE_NAME:$IMAGE_TAG"
+            }
+        }
+
+        stage ('run maven image') {
+            steps{
+
+                sh "docker run --name maven_container  -d -p 8081:8081"
+            }
+        }
+    }
+}
