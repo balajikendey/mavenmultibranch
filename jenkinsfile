@@ -6,7 +6,6 @@ pipeline{
             steps{
                 sh "docker rmi maven_image || true"
                 sh "docker rmi maven_container || true"
-                sh "cd spring-boot-hello-world/"
                 sh "pwd && ls "
                 sh "docker build -t maven_image ."
                
