@@ -12,7 +12,6 @@ FROM adoptopenjdk/openjdk11:alpine-jre
 ARG JAR_FILE=spring-boot-2-hello-world-1.0.2-SNAPSHOT.jar
 
 WORKDIR /opt/app
-COPY 
 # Copy the spring-boot-api-tutorial.jar from the maven stage to the /opt/app directory of the current stage.
 COPY --from=maven /usr/src/app/target/${JAR_FILE} /opt/app/
 
