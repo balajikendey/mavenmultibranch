@@ -11,7 +11,7 @@ pipeline{
         stage ('build maven image') {
             steps{
                 azureDirectoryId = credentials('ad-id')
-                azureCLI([credentialsId: azureCredentials, script: 'az acr login --name ' + ACR_NAME]) sh "docker rm -f sql_container || true"
+                azureCLI([credentialsId: azureCredentials, script: 'az acr login --name ' + ACR_NAME])
                 sh "docker rmi maven_image || true"
                 sh "docker rmi maven_container || true"
                 sh "docker build -t maven_image ./spring-boot-hello-world"
