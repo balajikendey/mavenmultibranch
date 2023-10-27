@@ -7,7 +7,9 @@ pipeline{
                 sh "docker rmi maven_image || true"
                 sh "docker rmi maven_container || true"
                 sh "cd spring-boot-hello-world/"
+                sh "pwd"
                 sh "docker build -t maven_image ."
+                sh "docker build -t maven_image ./spring-boot-hello-world"
             }
         }
          stage('push to Dockerregistery'){
