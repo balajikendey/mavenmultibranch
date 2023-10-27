@@ -1,27 +1,27 @@
 pipeline{
     agent any
 
-     environment {
-        ACR_NAME = 'mavenregistry' // Replace with your Azure Container Registry name
-        IMAGE_NAME = 'maven' // Replace with your desired image name
-        IMAGE_TAG = 'latest'
-    }
-
     stages{
         stage ('build maven image') {
             steps{
-                azureDirectoryId = credentials('ad-id')
-                azureCLI([credentialsId: azureCredentials, script: 'az acr login --name ' + ACR_NAME]) sh "docker rm -f sql_container || true"
                 sh "docker rmi maven_image || true"
                 sh "docker rmi maven_container || true"
-                sh "docker build -t maven_image ./spring-boot-hello-world"
-                sh "docker push $ACR_NAME.azurecr.io/$IMAGE_NAME:$IMAGE_TAG"
+                sh "cd spring-boot-hello-world/"
+                sh "docker build -t maven_image ."
             }
         }
+         stage('push to Dockerregistery'){
+                
+                steps{
+                    sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
+                    echo 'Docker login succeed'
+                    sh "docker tag nodejstask:0.0.${env.BUILD_ID} balajikendey/maven:0.0.${env.BUILD_ID}"
+                    sh "docker push balajikendey/maven:0.0.${env.BUILD_ID}" 
+                 }
+            }
 
-        stage ('run maven image') {
+         stage ('run maven image') {
             steps{
-
                 sh "docker run --name maven_container  -d -p 8081:8081"
             }
         }
